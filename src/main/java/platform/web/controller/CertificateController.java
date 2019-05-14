@@ -52,7 +52,7 @@ public class CertificateController {
     /**
      * Read a certificate.
      */
-    @RequestMapping(value = "/certificate/{id}", method = RequestMethod.GET,
+    @RequestMapping(value = "/certificates/{id}", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public CertificateInfo readOne(@PathVariable(value = "id") @Valid @Min(1) @Max(1000) Long id) {
         return this.service.readOne(id);
@@ -62,7 +62,7 @@ public class CertificateController {
     /**
      * Read all certificate.
      */
-    @RequestMapping(value = "/certificate", method = RequestMethod.GET,
+    @RequestMapping(value = "/certificates", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public List<CertificateInfo> readAll() {
         return this.service.readAll();
@@ -71,7 +71,7 @@ public class CertificateController {
     /**
      * Create a certificate.
      */
-    @RequestMapping(value = "/certificate", method = RequestMethod.POST,
+    @RequestMapping(value = "/certificates", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public CertificateAndKey createOne() {
         return this.service.createOne();
@@ -80,7 +80,7 @@ public class CertificateController {
     /**
      * Delete a certificate.
      */
-    @RequestMapping(value = "/certificate/{id}", method = RequestMethod.DELETE,
+    @RequestMapping(value = "/certificates/{id}", method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public void deleteOne(@PathVariable(value = "id") @Valid @Min(1) @Max(1000) Long id) {
         this.service.deleteOne(id);
