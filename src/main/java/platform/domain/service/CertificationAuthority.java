@@ -44,13 +44,20 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.PKCS10CertificationRequestBuilder;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import platform.AppConfigure;
 import platform.domain.entity.other.Base64Key;
 import platform.domain.entity.other.CertificateAndKey;
 import platform.domain.entity.other.CsrAndKeyPair;
 
-@Component
+@Service
 public class CertificationAuthority {
+
+    @Autowired
+    AppConfigure conf;
+
+    CertificationAuthority() {}
 
     // Logger
     private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
@@ -61,7 +68,6 @@ public class CertificationAuthority {
     // DSA
     private static String SIGNATURE_ALGORITHM = "SHA256withRSA";
 
-
     /**
      * Signing request.
      *
@@ -70,17 +76,8 @@ public class CertificationAuthority {
      * @param pair
      * @return
      */
-    public static CertificateAndKey signCertificationRequest(PKCS10CertificationRequest csr,
+    public CertificateAndKey signCertificationRequest(PKCS10CertificationRequest csr,
             PrivateKey caPrivateKey, KeyPair pair) {
-
-        // Signer N parameters
-        final String COUNTRY = "Japan";
-        final String STATE_OF_PROVINCE_NAME = "Tokyo";
-        final String LOCARITY_NAME = "Minato-ku";
-        final String ORGANIZATION_NAME = "G0S";
-        final String ORGANIZATION_UNIT_NAME = "DataScience";
-        final String COMMON_NAME = "issuer";
-        final String EMAIL = "test@gmail.com";
 
         Security.addProvider(new BouncyCastleProvider());
 
@@ -96,15 +93,12 @@ public class CertificationAuthority {
             SubjectPublicKeyInfo keyInfo =
                     SubjectPublicKeyInfo.getInstance(pair.getPublic().getEncoded());
 
-            // DN
-            String dn = "C=" + COUNTRY + ", ST=" + STATE_OF_PROVINCE_NAME + ", L=" + LOCARITY_NAME
-                    + ", O=" + ORGANIZATION_NAME + ", OU=" + ORGANIZATION_UNIT_NAME + ", CN="
-                    + COMMON_NAME + ", EMAILADDRESS=" + EMAIL;
+            String dn = conf.getCaDistinguishedName();
+
             X509v3CertificateBuilder myCertificateGenerator = new X509v3CertificateBuilder(
                     new X500Name(dn), new BigInteger("1"), new Date(System.currentTimeMillis()),
                     new Date(System.currentTimeMillis() + VALIDITY * 86400000L), csr.getSubject(),
                     keyInfo);
-
 
             ContentSigner sigGen =
                     new BcRSAContentSignerBuilder(sigAlgId, digAlgId).build(asymKeyParam);
@@ -161,16 +155,7 @@ public class CertificationAuthority {
      *
      * @return
      */
-    public static CsrAndKeyPair genCertificateSigningRequest() {
-
-        // To be signed DN parameters
-        final String COUNTRY = "NO";
-        final String STATE_OF_PROVINCE_NAME = "Trondheim";
-        final String LOCARITY_NAME = "Trondheim";
-        final String ORGANIZATION_NAME = "Senthadev";
-        final String ORGANIZATION_UNIT_NAME = "Innovation";
-        final String COMMON_NAME = "www.senthadev.com";
-        final String EMAIL = "senthadev@gmail.com";
+    public CsrAndKeyPair genCertificateSigningRequest() {
 
         Security.addProvider(new BouncyCastleProvider());
 
@@ -184,10 +169,8 @@ public class CertificationAuthority {
             PrivateKey privateKey = pair.getPrivate();
             PublicKey publicKey = pair.getPublic();
 
-            // DN
-            String dn = "C=" + COUNTRY + ", ST=" + STATE_OF_PROVINCE_NAME + ", L=" + LOCARITY_NAME
-                    + ", O=" + ORGANIZATION_NAME + ", OU=" + ORGANIZATION_UNIT_NAME + ", CN="
-                    + COMMON_NAME + ", EMAILADDRESS=" + EMAIL;
+            String dn = conf.getClientDistinguishedName();
+
             X500Principal subject = new X500Principal(dn);
 
             ContentSigner signGen;
@@ -209,16 +192,7 @@ public class CertificationAuthority {
         return null;
     }
 
-    public static String genCaCertificate() {
-
-        // Signer DN parameters
-        final String COUNTRY = "Japan";
-        final String STATE_OF_PROVINCE_NAME = "Tokyo";
-        final String LOCARITY_NAME = "Minato-ku";
-        final String ORGANIZATION_NAME = "G0S";
-        final String ORGANIZATION_UNIT_NAME = "DataScience";
-        final String COMMON_NAME = "issuer";
-        final String EMAIL = "test@gmail.com";
+    public String genCaCertificate() {
 
         Security.addProvider(new BouncyCastleProvider());
 
@@ -242,10 +216,7 @@ public class CertificationAuthority {
             SubjectPublicKeyInfo keyInfo =
                     SubjectPublicKeyInfo.getInstance(pair.getPublic().getEncoded());
 
-            // DN
-            String dn = "C=" + COUNTRY + ", ST=" + STATE_OF_PROVINCE_NAME + ", L=" + LOCARITY_NAME
-                    + ", O=" + ORGANIZATION_NAME + ", OU=" + ORGANIZATION_UNIT_NAME + ", CN="
-                    + COMMON_NAME + ", EMAILADDRESS=" + EMAIL;
+            String dn = conf.getCaDistinguishedName();
 
             X509v3CertificateBuilder myCertificateGenerator = new X509v3CertificateBuilder(
                     new X500Name(dn), new BigInteger("1"), new Date(System.currentTimeMillis()),
@@ -287,11 +258,12 @@ public class CertificationAuthority {
         return null;
     }
 
-    public static PrivateKey readPrivateKey(String filename) {
+    public PrivateKey readPrivateKey(String filename) {
 
         try {
             Security.addProvider(new BouncyCastleProvider());
 
+            logger.info("privateKey path : " + filename);
             File f = new File(filename);
             FileInputStream fis = new FileInputStream(f);
             DataInputStream dis = new DataInputStream(fis);
@@ -319,11 +291,12 @@ public class CertificationAuthority {
         return null;
     }
 
-    public static PublicKey readPublicKey(String filename) {
+    public PublicKey readPublicKey(String filename) {
 
         try {
             Security.addProvider(new BouncyCastleProvider());
 
+            logger.info("publicKey path : " + filename);
             File f = new File(filename);
             FileInputStream fis = new FileInputStream(f);
             DataInputStream dis = new DataInputStream(fis);
