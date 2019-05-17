@@ -15,7 +15,7 @@ externalDocs:
   url: https://azure.microsoft.com/ja-jp/blog/announcing-support-for-x-509-ca-on-azure-iot-hub/
 
 servers:
-  - url: http://ca.ground0state/api/v1
+  - url: http://ca.ground0state.com/api/v1
 
 tags:
   - name: certificates
