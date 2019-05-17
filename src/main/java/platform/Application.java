@@ -26,25 +26,23 @@ public class Application {
     public CommandLineRunner demo(CertificateRepository certificateRepository) {
 
         String cert = "-----BEGIN CERTIFICATE-----\n"
-                + "MIIDWjCCAkKgAwIBAgIVAPn6vWtNWGcSpdZyqhKLyYoXq3NbMA0GCSqGSIb3DQEB\n"
-                + "CwUAME0xSzBJBgNVBAsMQkFtYXpvbiBXZWIgU2VydmljZXMgTz1BbWF6b24uY29t\n"
-                + "IEluYy4gTD1TZWF0dGxlIFNUPVdhc2hpbmd0b24gQz1VUzAeFw0xOTA1MDgxMjE5\n"
-                + "MTZaFw00OTEyMzEyMzU5NTlaMB4xHDAaBgNVBAMME0FXUyBJb1QgQ2VydGlmaWNh\n"
-                + "dGUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDVu44Ra4uI5uDv8ZYr\n"
-                + "TOLuGkIlRoGazItRVybql1P4ffO/MEEC+FRjV2RKiM1y2kk0/JstEsUx5rzvTag6\n"
-                + "xb/3Qv0rEovbSIFIHXv/XQ3G1PwtpsmkMPybDaYcpAAnr2WAn4NYUDtwDK2JlVfB\n"
-                + "CKQWB3+EPB1/Sx2pJDtwMWWi+bxSeXRgrsPn0wljVvqphI231hI9EqULobxxidod\n"
-                + "N1zlH3NhdE/YJ0PJ4rFFyELjqifAnQa7NhwTsl/2LCPKj5ZlV7HeeTAPs9sWgZzS\n"
-                + "sn8OkghHHBo8m5Ww6Hm3SMz+SJ4GXFbygAOsPtysXt8Sj7r3/itucEawLF2l38AM\n"
-                + "mE07AgMBAAGjYDBeMB8GA1UdIwQYMBaAFAdrbAFetldyzHntUYGsI3FN0b16MB0G\n"
-                + "A1UdDgQWBBRLsXBjcf+tFPrAuMYUpPHBeYNkvjAMBgNVHRMBAf8EAjAAMA4GA1Ud\n"
-                + "DwEB/wQEAwIHgDANBgkqhkiG9w0BAQsFAAOCAQEAPUWGpaJUIcGpFxTElLRWSy6q\n"
-                + "gYk1IIQz5FlbrB8lQk5YX0qF9XDI8HsE8QI1xgzy9++sV2rDed4QS3mYdb86txs/\n"
-                + "ZWzKMjsjvqxJW7mv51DzrEPjgdYplRl0qWrdJkOvM2H09XpKWNO/HNiMO/ak6uCb\n"
-                + "5yBit6uFkE77h7UdorD8Da1yco+mefg84QylkJdvyCH1Knt4rsStnk1oxN4KODja\n"
-                + "1vhYylBx8KtGSNiP9oQEJNm6PTMUOYQVyR+t8ez3YLqEMrg3yGES3uKfHBUOuH0Q\n"
-                + "76CZiMtoSK6Fml7D541eIbJf8nSVe5R4SitmnrF1uLeJfE4ROczALnlZrWRp5g==\n"
-                + "-----END CERTIFICATE-----";
+                + "MIIDADCCAeigAwIBAgIBATANBgkqhkiG9w0BAQsFADBnMRkwFwYDVQQLDBBDZXJ0\n"
+                + "aWZpY2F0ZSBkZW1vMRkwFwYDVQQKDBBncm91bmQwc3RhdGUuY29tMRIwEAYDVQQH\n"
+                + "DAlNaW5hdG8ta3UxDjAMBgNVBAgMBVRva3lvMQswCQYDVQQGEwJKUDAeFw0xOTA1\n"
+                + "MTcxMTIxMjJaFw00ODEyMTAxMTIxMjJaMCAxHjAcBgNVBAMTFUNlcnRpZmljYXRl\n"
+                + "IGRlbW8gdXNlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAIHxxThn\n"
+                + "iDYX1ZsaFa+y2zAqUNhBKZ5WTJUNAoLWj7IHS0DiBNW9RTmUHxNLIhQBjtjZFHzH\n"
+                + "H4rGZRp6ZSWal7zUekqqxsJ2JKB8MAZFk/0cLn4d5Y2BHOarzh3gsaWrjc7kt43Y\n"
+                + "4AfjKVotlbww3SOy03uO9ot0/6781U6P0pnvlsUZYx1GPlg3kKNH3FZpKDuX/WDy\n"
+                + "s/iKZefxDJBz48Jxibx9TmJYH391i+DcDi8vO41stxdV448IJK/VHvF4J4itX6tW\n"
+                + "JZrWS1OfGQWUIicmVJGoTEbfxjhZH88O/u8ieZVcGPs2gB69LrUQiEfjpfpjQhRJ\n"
+                + "Jr/SuOP4MA4/g58CAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAOHzeTlhIouTt4Kkn\n"
+                + "z4wAXGbeZBJFMWXPJ9BOjoDrQ+rDTaxY4AcNqv1euwJPAmQ12xnLfu1c5UIVmgYV\n"
+                + "MOv/jof6lKkpQbIUDvaefOZ/OVVKQEECjAqA9ICkNtpiiXKLKQeTenB7auLknBuM\n"
+                + "t4mpssarLpzYh1oCwdDOxk6Agm8/ZURL7TtYnSz1hqJ/6QygbCSSbR17aH2VN6Rd\n"
+                + "hic4MJ0bVLIFwRpqI4vqd+YeBdy7e4qylNxM4Thcc09qpXm4dj/bNqUbhAoM8ErU\n"
+                + "KePbBmN4NG1SppvX9xpBhrQX7A0usaR/Ex/JeVhJ7EP4cAD+N7o0jiDEX7XGUr5k\n"
+                + "vNyIEA==\n" + "-----END CERTIFICATE-----\n";
 
         return (args) -> {
             certificateRepository
