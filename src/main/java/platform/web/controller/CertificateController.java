@@ -37,17 +37,17 @@ public class CertificateController {
     /**
      * Test.
      */
-    @RequestMapping(value = "/test", method = RequestMethod.GET,
-            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
-            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public CertificateInfo test() {
-        CertificateInfo certificateInfo = new CertificateInfo();
-        certificateInfo.setId((long) 1);
-        certificateInfo.setCertificate("test");
-        certificateInfo.setCreatedAt(null);
-
-        return certificateInfo;
-    }
+    // @RequestMapping(value = "/test", method = RequestMethod.GET,
+    // consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+    // produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    // public CertificateInfo test() {
+    // CertificateInfo certificateInfo = new CertificateInfo();
+    // certificateInfo.setId((long) 1);
+    // certificateInfo.setCertificate("test");
+    // certificateInfo.setCreatedAt(null);
+    //
+    // return certificateInfo;
+    // }
 
     /**
      * Read a certificate.

@@ -47,8 +47,6 @@ public class Application {
                 + "-----END CERTIFICATE-----";
 
         return (args) -> {
-            certificateRepository.save(
-                    new CertificateInfo("initialize", new Timestamp(System.currentTimeMillis())));
             certificateRepository
                     .save(new CertificateInfo(cert, new Timestamp(System.currentTimeMillis())));
 
