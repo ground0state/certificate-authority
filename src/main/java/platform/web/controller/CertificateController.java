@@ -73,6 +73,7 @@ public class CertificateController {
      */
     @RequestMapping(value = "/certificates", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
     public CertificateAndKey createOne() {
         return this.service.createOne();
     }

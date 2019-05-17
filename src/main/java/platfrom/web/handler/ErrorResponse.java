@@ -7,7 +7,7 @@ import lombok.Value;
 
 @Value
 public class ErrorResponse {
-    @JsonProperty("Error")
+    @JsonProperty("error")
     private Error error;
 
     public ErrorResponse(String code, String message) {
