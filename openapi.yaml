@@ -1,0 +1,176 @@
+openapi: 3.0.0
+info:
+  description: This is a demonstration. This API generates certificates and store in databese.
+  version: 1.0.0
+  title: Certification authority API
+  # termsOfService: http://swagger.io/terms/
+  # contact:
+  #   email: apiteam@swagger.io
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+    
+externalDocs:
+  description: sample use (Azure IoT hub) 
+  url: https://azure.microsoft.com/ja-jp/blog/announcing-support-for-x-509-ca-on-azure-iot-hub/
+
+servers:
+  - url: http://ca.ground0state/api/v1
+
+tags:
+  - name: certificates
+    description: Collections of certificates.
+
+paths:
+  /certificates:
+    get:
+      tags:
+        - certificates
+      description: Find all certificates.
+      # operationId:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                "items":
+                  $ref: "#/components/schemas/CertificateInfo"
+            
+    post:
+      tags:
+        - certificates
+      description: Generate a certificate.
+      # operationId:
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CertificateAndKey"
+
+  /certificates/{id}:
+    get:
+      tags:
+        - certificates
+      description: Find a certificate by specifying id.
+      # operationId:
+      parameters:
+        - name: id
+          in: path
+          description: The identifier of the certificate that are being requested. 
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CertificateInfo"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        format: int64
+                        example: 404
+                      message: 
+                        type: string
+                        format: string
+                        example: Not Found
+            
+    delete:
+      tags:
+        - certificates
+      description: Delete a certificate by specifying id.
+      # operationId:
+      parameters:
+        - name: id
+          in: path
+          description: The identifier of the certificate that are being requested. 
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        format: int64
+                        example: 404
+                      message: 
+                        type: string
+                        format: string
+                        example: Not Found
+
+components:
+  schemas:
+    CertificateInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        certificate:
+          type: string
+          format: string
+          example: "-----BEGIN CERTIFICATE-----\nMIIDADCCAeigAwIBAgIBATANBgkqhkiG9w0BAQsFADBnMRkwFwYDVQQLDBBDZXJ0\naWZpY2F0ZSBkZW1vMRkwFwYDVQQKDBBncm91bmQwc3RhdGUuY29tMRIwEAYDVQQH\nDAlNaW5hdG8ta3UxDjAMBgNVBAgMBVRva3lvMQswCQYDVQQGEwJKUDAeFw0xOTA1\nMTcxMTIxMjJaFw00ODEyMTAxMTIxMjJaMCAxHjAcBgNVBAMTFUNlcnRpZmljYXRl\nIGRlbW8gdXNlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAIHxxThn\niDYX1ZsaFa+y2zAqUNhBKZ5WTJUNAoLWj7IHS0DiBNW9RTmUHxNLIhQBjtjZFHzH\nH4rGZRp6ZSWal7zUekqqxsJ2JKB8MAZFk/0cLn4d5Y2BHOarzh3gsaWrjc7kt43Y\n4AfjKVotlbww3SOy03uO9ot0/6781U6P0pnvlsUZYx1GPlg3kKNH3FZpKDuX/WDy\ns/iKZefxDJBz48Jxibx9TmJYH391i+DcDi8vO41stxdV448IJK/VHvF4J4itX6tW\nJZrWS1OfGQWUIicmVJGoTEbfxjhZH88O/u8ieZVcGPs2gB69LrUQiEfjpfpjQhRJ\nJr/SuOP4MA4/g58CAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAOHzeTlhIouTt4Kkn\nz4wAXGbeZBJFMWXPJ9BOjoDrQ+rDTaxY4AcNqv1euwJPAmQ12xnLfu1c5UIVmgYV\nMOv/jof6lKkpQbIUDvaefOZ/OVVKQEECjAqA9ICkNtpiiXKLKQeTenB7auLknBuM\nt4mpssarLpzYh1oCwdDOxk6Agm8/ZURL7TtYnSz1hqJ/6QygbCSSbR17aH2VN6Rd\nhic4MJ0bVLIFwRpqI4vqd+YeBdy7e4qylNxM4Thcc09qpXm4dj/bNqUbhAoM8ErU\nKePbBmN4NG1SppvX9xpBhrQX7A0usaR/Ex/JeVhJ7EP4cAD+N7o0jiDEX7XGUr5k\nvNyIEA==\n-----END CERTIFICATE-----\n"
+        createdAt:
+          type: string
+          format: date-time
+          example: 2019-05-17T14:11:10.684+0000
+          
+    Base64Key:
+      type: object
+      properties:
+        base64PrivateKey:
+          type: string
+          format: string
+          example: "-----BEGIN RSA PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCEpkpQDqYgHuC6\nKh6YS2fe6Fa+B/NgBNpYLaBibV3tn+o7haJZE5xx2zDixjMB/0jOZAuIaJsmgIdt\nbFUn8TnCc1deaVsmFqx0l4ceu9UZVC1QKcAZEs+jOBUrNvrUqj6ICdT6PsFajj41\nDbq1MDjzfp5XRyakw/+6ORv8Mp5tHo/GPvh2GmicX0r6qWFUpy+KCsQY6v+gKZKk\nOBq5kMneEDnkBHzB0KuGqwJ2vj3FTVIZDOq09VbbNMhlldevVtSdTuNFRNHjQNb4\nDjCEfbVgL/pOdqgsUwnjYFf0GOq8koKcli74KFzpYSl6KNmpubEDHHewLQ2mufe4\nsJ2d3VAjAgMBAAECggEAdaSxZX0IcpZQAmtWhQTjUztFqvWMMA09xFR62LBcTGG2\nMCHdkRimeAfIvGbBWDUbUghCfjEf4K6+7RnWED2NV1pKEy5nK0mSmzjEGkrFvNf9\n9AmDF/mp8vzLMW9qV+/A04+8tk+v1esvWogZnZXt/G3AanFs4VX+2B7MJgiSnvzY\nWfsvuimP36f1mhjwdbPnQAlufRKyDaVpQvALajuYYttZN6y67j6V+a4YJJriySgs\n8sTi8+rgNTmcGUWFFM2FVNZS2fZnMFBkL/UTzaPk9nXwV8A/HsZgJK90lJ1TgpFw\nng2UVXQmNOEVcCIWZYscLc1y07ATC7co/5LeRWgfiQKBgQDwVJ8fTDKDgRCUHH0O\nghC3h9zOPZxJISH1L0IFfzJZqPPxT2IBBCaTVrjm0XiS0VlRXJFROdfFYvuozpFo\niQdmI2vF5KuKcajLJtQJYFj8FEqTZRM9fQKXcuNi9jPJWGewCTRC4kWLuNVf4Kh+\n08JuSIz07eqviQR91FLrbxTTxwKBgQCNTFsgfOSs1Zy2LjZ+z7tp3bdqp/fmivob\nZXFqM67SPWIaQkWL94zEx2xhesF+KxRV40YHhuuRft/qCEQrYZ40YBrio2eEU+WE\nrafXqgFBqmKgOCjNh4oz9kQtk1InPslytwyEprPIkwvDClmWwo/gTGXnTraZEPCB\ngQ4T0cboxQKBgQC0FXS2qw4e5BNcKIy81lFYdQHLuPbnBWDArIy4Obus26EPbQBu\n6oFNXmpm6weCXESlZsutJb69NZKFx2PGBQf6TQhw3Qx9TPXCZHH2JLAJE9td3xsv\ntADBI2GnwfzEHu5zRjJW+95I+FNK6LjZcCv9H3ggADcfGXi4IOWRbUcZ+QKBgF/y\nV3bKGCXcr5tt6gdWW/bZXXEJOebMvGTaD5eEHNQaZoFaOwt+P5JnsIrI5pcb/aUM\nvULjNRcJRlcO4etrUBhUoiz/tI1AwvvDR9PEVzIV1v7g46Qcw5XhRg6EmSaZFgXV\nkqSI5k/uue/pGUisOTKf7hqRcqChxg7KaZq/ugfZAoGAcL1urGJ8EE7jINZ6TEaa\nKG6gPY/UxC18MW5YHQ43ceR0yCzl8TZVZBSuRHeygq/e08uGMd3PSzWpp4QO9RAZ\nMV5qC6NujE+aJ+R1X/KygEMkaG5aV+IINb9QK0S/xiMTUpcUymEmaOfZITBHYCNC\ncA+PkxrxjHLExJ+eVm1ycgE=\n-----END RSA PRIVATE KEY-----\n"
+        base64PublicKey:
+          type: string
+          format: string
+          example: "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhKZKUA6mIB7guioemEtn\n3uhWvgfzYATaWC2gYm1d7Z/qO4WiWROccdsw4sYzAf9IzmQLiGibJoCHbWxVJ/E5\nwnNXXmlbJhasdJeHHrvVGVQtUCnAGRLPozgVKzb61Ko+iAnU+j7BWo4+NQ26tTA4\n836eV0cmpMP/ujkb/DKebR6Pxj74dhponF9K+qlhVKcvigrEGOr/oCmSpDgauZDJ\n3hA55AR8wdCrhqsCdr49xU1SGQzqtPVW2zTIZZXXr1bUnU7jRUTR40DW+A4whH21\nYC/6TnaoLFMJ42BX9BjqvJKCnJYu+Chc6WEpeijZqbmxAxx3sC0Nprn3uLCdnd1Q\nIwIDAQAB\n-----END PUBLIC KEY-----\n"
+
+    CertificateAndKey:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        certificate:
+          type: string
+          format: string
+          example: "-----BEGIN CERTIFICATE-----\nMIIDADCCAeigAwIBAgIBATANBgkqhkiG9w0BAQsFADBnMRkwFwYDVQQLDBBDZXJ0\naWZpY2F0ZSBkZW1vMRkwFwYDVQQKDBBncm91bmQwc3RhdGUuY29tMRIwEAYDVQQH\nDAlNaW5hdG8ta3UxDjAMBgNVBAgMBVRva3lvMQswCQYDVQQGEwJKUDAeFw0xOTA1\nMTcxMTIxMjJaFw00ODEyMTAxMTIxMjJaMCAxHjAcBgNVBAMTFUNlcnRpZmljYXRl\nIGRlbW8gdXNlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAIHxxThn\niDYX1ZsaFa+y2zAqUNhBKZ5WTJUNAoLWj7IHS0DiBNW9RTmUHxNLIhQBjtjZFHzH\nH4rGZRp6ZSWal7zUekqqxsJ2JKB8MAZFk/0cLn4d5Y2BHOarzh3gsaWrjc7kt43Y\n4AfjKVotlbww3SOy03uO9ot0/6781U6P0pnvlsUZYx1GPlg3kKNH3FZpKDuX/WDy\ns/iKZefxDJBz48Jxibx9TmJYH391i+DcDi8vO41stxdV448IJK/VHvF4J4itX6tW\nJZrWS1OfGQWUIicmVJGoTEbfxjhZH88O/u8ieZVcGPs2gB69LrUQiEfjpfpjQhRJ\nJr/SuOP4MA4/g58CAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAOHzeTlhIouTt4Kkn\nz4wAXGbeZBJFMWXPJ9BOjoDrQ+rDTaxY4AcNqv1euwJPAmQ12xnLfu1c5UIVmgYV\nMOv/jof6lKkpQbIUDvaefOZ/OVVKQEECjAqA9ICkNtpiiXKLKQeTenB7auLknBuM\nt4mpssarLpzYh1oCwdDOxk6Agm8/ZURL7TtYnSz1hqJ/6QygbCSSbR17aH2VN6Rd\nhic4MJ0bVLIFwRpqI4vqd+YeBdy7e4qylNxM4Thcc09qpXm4dj/bNqUbhAoM8ErU\nKePbBmN4NG1SppvX9xpBhrQX7A0usaR/Ex/JeVhJ7EP4cAD+N7o0jiDEX7XGUr5k\nvNyIEA==\n-----END CERTIFICATE-----\n"
+        createdAt:
+          type: string
+          format: date-time
+          example: 2019-05-17T14:11:10.684+0000
+        base64Key:
+          $ref: "#/components/schemas/Base64Key"
