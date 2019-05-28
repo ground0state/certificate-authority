@@ -10,9 +10,7 @@ import lombok.Setter;
 public class CertificateAndKey {
 
     private Long id;
-    private String cetificate;
+    private String certificate;
     private Date createdAt;
-
     private Base64Key base64Key;
-
 }

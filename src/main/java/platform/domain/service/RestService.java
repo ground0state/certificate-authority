@@ -1,6 +1,5 @@
 package platform.domain.service;
 
-import java.security.PrivateKey;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import platform.AppConfigure;
 import platform.domain.entity.db.CertificateInfo;
 import platform.domain.entity.other.CertificateAndKey;
-import platform.domain.entity.other.CsrAndKeyPair;
 import platform.domain.repository.CertificateRepository;
 import platfrom.web.exception.NotFoundException;
 
@@ -62,17 +60,14 @@ public class RestService {
      * @return Certificate information
      */
     public CertificateAndKey createOne() {
-        CsrAndKeyPair csrAndKeyPair = this.certificationAuthority.genCertificateSigningRequest();
-        PrivateKey CA_PRIVATE_KEY =
-                this.certificationAuthority.readPrivateKey(conf.getCaPrivateKeyFileName());
-        CertificateAndKey certificateAndKey = this.certificationAuthority.signCertificationRequest(
-                csrAndKeyPair.getCsr(), CA_PRIVATE_KEY, csrAndKeyPair.getPair());
+        CertificateAndKey certificateAndKey =
+                this.certificationAuthority.generateAndSignCertificate();
 
-        this.certificateRepository.save(new CertificateInfo(certificateAndKey.getCetificate(),
+        this.certificateRepository.save(new CertificateInfo(certificateAndKey.getCertificate(),
                 new Timestamp(System.currentTimeMillis())));
 
         Optional<CertificateInfo> registerded = this.certificateRepository
-                .findByCertificateEquals(certificateAndKey.getCetificate());
+                .findByCertificateEquals(certificateAndKey.getCertificate());
         certificateAndKey.setId(registerded.get().getId());
         certificateAndKey.setCreatedAt(registerded.get().getCreatedAt());
 

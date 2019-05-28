@@ -54,11 +54,6 @@ import platform.domain.entity.other.CsrAndKeyPair;
 @Service
 public class CertificationAuthority {
 
-    @Autowired
-    AppConfigure conf;
-
-    CertificationAuthority() {}
-
     // Logger
     private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -68,13 +63,45 @@ public class CertificationAuthority {
     // DSA
     private static String SIGNATURE_ALGORITHM = "SHA256withRSA";
 
+    private String caDistinguishedName;
+    private String clientDistinguishedName;
+    private String caPrivateKeyFileName;
+
+
+    /**
+     * Constructor.
+     */
+    @Autowired
+    public CertificationAuthority(AppConfigure conf) {
+        this.caDistinguishedName = conf.getCaDistinguishedName();
+        this.clientDistinguishedName = conf.getClientDistinguishedName();
+        this.caPrivateKeyFileName = conf.getCaPrivateKeyFileName();
+    }
+
+
+    /**
+     * Generate signed certificate.
+     *
+     * @return
+     */
+    public CertificateAndKey generateAndSignCertificate() {
+
+        CsrAndKeyPair csrAndKeyPair = this.genCertificateSigningRequest();
+        PrivateKey CA_PRIVATE_KEY = this.readPrivateKey(this.caPrivateKeyFileName);
+        CertificateAndKey certificateAndKey = this.signCertificationRequest(csrAndKeyPair.getCsr(),
+                CA_PRIVATE_KEY, csrAndKeyPair.getPair());
+
+        return certificateAndKey;
+    }
+
+
     /**
      * Signing request.
      *
-     * @param csr
-     * @param caPrivateKey
-     * @param pair
-     * @return
+     * @param csr CSR
+     * @param caPrivateKey A Certification Authority's privatekey
+     * @param pair Client's key pair
+     * @return A certificate and key pair. These are base64-encoded.
      */
     public CertificateAndKey signCertificationRequest(PKCS10CertificationRequest csr,
             PrivateKey caPrivateKey, KeyPair pair) {
@@ -93,12 +120,11 @@ public class CertificationAuthority {
             SubjectPublicKeyInfo keyInfo =
                     SubjectPublicKeyInfo.getInstance(pair.getPublic().getEncoded());
 
-            String dn = conf.getCaDistinguishedName();
-
-            X509v3CertificateBuilder myCertificateGenerator = new X509v3CertificateBuilder(
-                    new X500Name(dn), new BigInteger("1"), new Date(System.currentTimeMillis()),
-                    new Date(System.currentTimeMillis() + VALIDITY * 86400000L), csr.getSubject(),
-                    keyInfo);
+            X509v3CertificateBuilder myCertificateGenerator =
+                    new X509v3CertificateBuilder(new X500Name(this.caDistinguishedName),
+                            new BigInteger("1"), new Date(System.currentTimeMillis()),
+                            new Date(System.currentTimeMillis() + VALIDITY * 86400000L),
+                            csr.getSubject(), keyInfo);
 
             ContentSigner sigGen =
                     new BcRSAContentSignerBuilder(sigAlgId, digAlgId).build(asymKeyParam);
@@ -113,7 +139,7 @@ public class CertificationAuthority {
                     .encodeToString(eeX509CertificateStructure.getEncoded());
             base64Cert =
                     "-----BEGIN CERTIFICATE-----\n" + base64Cert + "\n-----END CERTIFICATE-----\n";
-            certificateAndKey.setCetificate(base64Cert);
+            certificateAndKey.setCertificate(base64Cert);
 
             Base64Key base64Key = new Base64Key();
             String base64PrivateKey = Base64.getMimeEncoder(64, new byte[] {'\n'})
@@ -152,8 +178,9 @@ public class CertificationAuthority {
     }
 
     /**
+     * Generate request.
      *
-     * @return
+     * @return CSR and key pair
      */
     public CsrAndKeyPair genCertificateSigningRequest() {
 
@@ -169,9 +196,7 @@ public class CertificationAuthority {
             PrivateKey privateKey = pair.getPrivate();
             PublicKey publicKey = pair.getPublic();
 
-            String dn = conf.getClientDistinguishedName();
-
-            X500Principal subject = new X500Principal(dn);
+            X500Principal subject = new X500Principal(this.clientDistinguishedName);
 
             ContentSigner signGen;
             signGen = new JcaContentSignerBuilder(SIGNATURE_ALGORITHM).build(privateKey);
@@ -192,6 +217,12 @@ public class CertificationAuthority {
         return null;
     }
 
+
+    /**
+     * Generate CA certificate.
+     *
+     * @return A base64 encoded certificate.
+     */
     public String genCaCertificate() {
 
         Security.addProvider(new BouncyCastleProvider());
@@ -216,12 +247,11 @@ public class CertificationAuthority {
             SubjectPublicKeyInfo keyInfo =
                     SubjectPublicKeyInfo.getInstance(pair.getPublic().getEncoded());
 
-            String dn = conf.getCaDistinguishedName();
-
-            X509v3CertificateBuilder myCertificateGenerator = new X509v3CertificateBuilder(
-                    new X500Name(dn), new BigInteger("1"), new Date(System.currentTimeMillis()),
-                    new Date(System.currentTimeMillis() + VALIDITY * 86400000L), new X500Name(dn),
-                    keyInfo);
+            X509v3CertificateBuilder myCertificateGenerator =
+                    new X509v3CertificateBuilder(new X500Name(this.caDistinguishedName),
+                            new BigInteger("1"), new Date(System.currentTimeMillis()),
+                            new Date(System.currentTimeMillis() + VALIDITY * 86400000L),
+                            new X500Name(this.caDistinguishedName), keyInfo);
 
             ContentSigner sigGen =
                     new BcRSAContentSignerBuilder(sigAlgId, digAlgId).build(asymKeyParam);
@@ -258,6 +288,13 @@ public class CertificationAuthority {
         return null;
     }
 
+
+    /**
+     * Load private key.
+     *
+     * @param filename private key name include path
+     * @return private key
+     */
     public PrivateKey readPrivateKey(String filename) {
 
         try {
@@ -291,6 +328,13 @@ public class CertificationAuthority {
         return null;
     }
 
+
+    /**
+     * Load public key.
+     *
+     * @param filename public key name include path
+     * @return public key
+     */
     public PublicKey readPublicKey(String filename) {
 
         try {
@@ -313,6 +357,7 @@ public class CertificationAuthority {
             X509EncodedKeySpec spec = new X509EncodedKeySpec(decoded);
             KeyFactory kf = KeyFactory.getInstance("RSA");
             return kf.generatePublic(spec);
+
         } catch (IOException e) {
             logger.error(e);
         } catch (NoSuchAlgorithmException e) {
